@@ -1,0 +1,4 @@
+# requirements.txt
+st-supabase-connection
+
+python-docx
