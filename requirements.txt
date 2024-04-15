@@ -1,4 +1,4 @@
 # requirements.txt
 st-supabase-connection
-
+supabase-py
 python-docx
