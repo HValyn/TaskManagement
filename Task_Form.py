@@ -82,7 +82,7 @@ with st.form("Task Form"):
          path = 'pages/TaskAssignmentFieldsNew.pdf'
          update_pdf_widgets(path, fields_to_update)
           
-         doc = fitz.open('pages\TaskAssignmentFieldsNew.pdf')
+         doc = fitz.open('pages/TaskAssignmentFieldsNew.pdf')
 
          pdf_bytes = doc.write()
          doc.close()
