@@ -1,7 +1,16 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import fitz
+import pprint as pp
 from st_supabase_connection import SupabaseConnection
+import base64
+
+
+def create_download_link(val, filename):
+    b64 = base64.b64encode(val)  # val looks like b'...'
+    return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="{filename}.pdf">Download file</a>'
+
 
 st.markdown("# Add New Task🎈")
 st.sidebar.markdown("# Add New Task 🎈")
@@ -16,20 +25,67 @@ for row in rows.data:
 Officers = ['Dr. Mohsin Sattar', 'Asad Ullah Farid' , 'Muhammad Umair Aslam' , 'Muhammad Abu Bakar']
 with st.form("Task Form"):
     project = st.number_input('Project Number' ,min_value=1, step=1)
-    currentDate = st.date_input('Current Date')
-    currentDate = currentDate.strftime("%m/%d/%Y")
+    currentDateO = st.date_input('Current Date')
+    
     assignmentDescription = st.text_area('Assignment Description')
-    EDC = st.date_input('EDC')
-    EDC = EDC.strftime("%m/%d/%Y")
+    EDCO = st.date_input('EDC')
+    EDC = EDCO.strftime("%m/%d/%Y")
     difficulty = st.text_input('Difficulty')
-    assignedby = st.selectbox('Assigned To', Names)
-    assignedTo = st.selectbox('Assigned By', Names)
+    assignedTo = st.selectbox('Assigned To', Names)
+    assignedby = st.selectbox('Assigned By', Names)
     approvedBy = st.selectbox('Approved By', Names)
     taskCompleted = st.checkbox('Task Completed')
-    CompletionDate = st.date_input('Completion Date')
-    CompletionDate = CompletionDate.strftime("%m/%d/%Y")
+    CompletionDateO = st.date_input('Completion Date')
+    CompletionDate = CompletionDateO.strftime("%m/%d/%Y")
+    currentDate = currentDateO.strftime("%m/%d/%Y")
+    duration = ''
     submit = st.form_submit_button('Generate Document')
     if submit:
          InsertResult = conn.table("Tasks").insert(
             {"ProjectID": project, "Dated": currentDate, "AssignmentDescription": assignmentDescription,"EDC": EDC,"Difficulty": difficulty,"Completed": taskCompleted,"Completion Date": CompletionDate,"Assigned To": assignedTo,"Assigned by": assignedby,"Approved By": approvedBy,}, count="None").execute()
+    
+         st.write(InsertResult)
+
+         fields_to_update = {
+            'Project': str(project),
+            'Date': str(currentDate),
+            'Description': str(assignmentDescription),
+            'Duration': str(duration),
+            'ExtraPages': '0',
+            'Difficulty': difficulty,
+            'EDC': EDC,
+            'ExtensionReason': '',
+            'AssignedTo': assignedTo,
+            'Lab': 'DS',
+            'WorkDetail': '',
+            'TabDuration': '',
+            'ToAssisst': '',
+            'AssignedBy': assignedby,
+            'ApprovedBy': approvedBy,
+            'AsignDesign': 'GM (Tech)',
+            'ApprovedDesign': 'GM (Tech)',
+            'Completed': str(taskCompleted),
+            'CompletionDate': CompletionDate,
+        }
+         
+         def update_pdf_widgets(pdf_path, field_values):
+            with fitz.open(pdf_path) as doc:
+                for page in doc:
+                    widgets = page.widgets()
+                    for widget in widgets:
+                        field_name = widget.field_name
+                        if field_name in field_values:
+                            widget.field_value = field_values[field_name]
+                            widget.update()
+                    doc.saveIncr()
+         update_pdf_widgets('pages\TaskAssignmentFieldsNew.pdf', fields_to_update)
+
+         doc = fitz.open('pages\TaskAssignmentFieldsNew.pdf')
+
+         pdf_bytes = doc.write()
+         doc.close()
+
+         html = create_download_link(pdf_bytes, "test")
+
+         st.markdown(html, unsafe_allow_html=True)
 
