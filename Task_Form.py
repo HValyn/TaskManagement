@@ -78,8 +78,10 @@ with st.form("Task Form"):
                             widget.field_value = field_values[field_name]
                             widget.update()
                     doc.saveIncr()
-         update_pdf_widgets('pages\TaskAssignmentFieldsNew.pdf', fields_to_update)
 
+         path = 'https://github.com/HValyn/TaskManagement/blob/main/pages/TaskAssignmentFieldsNew.pdf'
+         update_pdf_widgets(path, fields_to_update)
+          
          doc = fitz.open('pages\TaskAssignmentFieldsNew.pdf')
 
          pdf_bytes = doc.write()
