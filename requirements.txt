@@ -2,3 +2,4 @@
 st-supabase-connection
 pymupdf
 python-docx
+pdf2docx
