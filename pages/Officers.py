@@ -3,6 +3,11 @@ from st_supabase_connection import SupabaseConnection
 import pandas as pd
 import numpy as np
 
+
+if not st.session_state["password_correct"]:
+    st.stop()
+
+
 st.markdown("# Officers ❄️")
 st.sidebar.markdown("# Officers ❄️")
 

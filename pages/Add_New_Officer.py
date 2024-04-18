@@ -1,6 +1,11 @@
 import streamlit as st
 from st_supabase_connection import SupabaseConnection
 
+
+if not st.session_state["password_correct"]:
+    st.stop()
+
+
 st.markdown("# Add New Officer❄️")
 st.sidebar.markdown("# Add New Officer ❄️")
 conn = st.connection("supabase",type=SupabaseConnection)
