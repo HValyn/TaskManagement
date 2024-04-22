@@ -3,9 +3,7 @@
 import hmac
 import streamlit as st
 
-
 # set sidebar collapsed before login
-
 def collapse():
     st.markdown("""
         <style>
@@ -16,6 +14,8 @@ def collapse():
         """, unsafe_allow_html=True)
 # set sidebar expanded after login
 collapse()
+if 'user' not in st.session_state:
+    st.session_state.user = ""
 def check_password():
     """Returns `True` if the user had a correct password."""
 
@@ -23,6 +23,7 @@ def check_password():
         """Form with widgets to collect user information"""
         with st.form("Credentials"):
             st.text_input("Username", key="username")
+            st.session_state.user = st.session_state["username"]
             st.text_input("Password", type="password", key="password")
             st.form_submit_button("Log in", on_click=password_entered)
 
@@ -35,7 +36,6 @@ def check_password():
             st.secrets.passwords[st.session_state["username"]],
         ):
             st.session_state["password_correct"] = True
-            st.session_state["login_status"] = True
             del st.session_state["password"]  # Don't store the username or password.
             del st.session_state["username"]
         else:
@@ -68,6 +68,7 @@ st.button("Logout" , on_click=clickedLogout)
 
 
 st.write("Hello and Welcome To Task Mangement")
+
 st.markdown("""
     <style>
         section[data-testid="stSidebar"][aria-expanded="true"]{
