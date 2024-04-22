@@ -7,18 +7,28 @@ import numpy as np
 if not st.session_state["password_correct"]:
     st.stop()
 
+if st.session_state.user != "mohsinsattar" or st.session_state.user == "":
+    st.write(st.session_state.user)
+    st.write("You Do Not Have the Authority")
+    st.stop()
+else:
+    st.markdown("# Officers ❄️")
+    st.sidebar.markdown("# Officers ❄️")
 
-st.markdown("# Officers ❄️")
-st.sidebar.markdown("# Officers ❄️")
 
 
+    # Initialize connection.
+    conn = st.connection("supabase",type=SupabaseConnection)
 
-# Initialize connection.
-conn = st.connection("supabase",type=SupabaseConnection)
+    # Perform query.
+    #rows = conn.query("Name", table="Officers", ttl= "10m").ilike(column="Name" , pattern="Muhammad Abu Bakar").execute()
 
-# Perform query.
-rows = conn.query("*", table="Officers", ttl="10m").execute()
 
-df = pd.DataFrame(rows.data)
-# Print results.
-st.table(df)
+    rows = conn.query("*", table="Officers", ttl="10m").execute()
+
+    df = pd.DataFrame(rows.data)
+    # Print results.
+    st.dataframe(df)
+
+   
+
