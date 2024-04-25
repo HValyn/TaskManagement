@@ -1,7 +1,12 @@
 import streamlit as st
 from st_supabase_connection import SupabaseConnection
+st.session_state
+#list of keys tied to widgets that you want to protect
+keeper_list = ['username', "user"]
 
-
+for key in keeper_list:
+    if key in st.session_state:
+        st.session_state[key] = st.session_state[key]
 if not st.session_state["password_correct"]:
     st.stop()
 

@@ -8,7 +8,13 @@ import base64
 # Import the required modules
 from pdf2docx import Converter
 import io
+#list of keys tied to widgets that you want to protect
+st.session_state
+keeper_list = ['username', "user"]
 
+for key in keeper_list:
+    if key in st.session_state:
+        st.session_state[key] = st.session_state[key]
 if not st.session_state["password_correct"]:
     st.stop()
 
@@ -27,10 +33,10 @@ st.sidebar.markdown("# Add New Task 🎈")
 conn = st.connection("supabase",type=SupabaseConnection)
 rows = conn.query("*", table="Officers", ttl="10m").execute()
 # Print results.
-IDs = []
+Designations = []
 Names = []
 for row in rows.data:
-    IDs.append(row['id'])
+    Designations.append(row['Designation'])
     Names.append(row['Name'])
 Officers = ['Dr. Mohsin Sattar', 'Asad Ullah Farid' , 'Muhammad Umair Aslam' , 'Muhammad Abu Bakar']
 with st.form("Task Form"):
@@ -43,16 +49,18 @@ with st.form("Task Form"):
     difficulty = st.text_input('Difficulty')
     assignedTo = st.selectbox('Assigned To', Names)
     assignedby = st.selectbox('Assigned By', Names)
+    assignByD = st.selectbox('Designation of Assigned By', Designations)
     approvedBy = st.selectbox('Approved By', Names)
+    approvByD = st.selectbox('Designation of Approved By', Designations)
     taskCompleted = st.checkbox('Task Completed')
     CompletionDateO = st.date_input('Completion Date')
     CompletionDate = CompletionDateO.strftime("%m/%d/%Y")
     currentDate = currentDateO.strftime("%m/%d/%Y")
-    duration = ''
+    duration = str(currentDate) + ' to ' + str(EDC)
     submit = st.form_submit_button('Generate Document')
     if submit:
          InsertResult = conn.table("Tasks").insert(
-            {"ProjectID": project, "Dated": currentDate, "AssignmentDescription": assignmentDescription,"EDC": EDC,"Difficulty": difficulty,"Completed": taskCompleted,"Completion Date": CompletionDate,"Assigned To": assignedTo,"Assigned by": assignedby,"Approved By": approvedBy,"username": st.session_state.user,}, count="None").execute()
+            {"ProjectID": project, "Dated": currentDate, "AssignmentDescription": assignmentDescription,"EDC": EDC,"Difficulty": difficulty,"Completed": taskCompleted,"Completion Date": CompletionDate,"Assigned To": assignedTo,"Assigned by": assignedby,"Approved By": approvedBy,"assignByD":assignByD,"approvByD":approvByD,"username": st.session_state.user,}, count="None").execute()
     
          st.write(InsertResult)
 
@@ -60,7 +68,7 @@ with st.form("Task Form"):
             'Project': str(project),
             'Date': str(currentDate),
             'Description': str(assignmentDescription),
-            'Duration': str(duration),
+            'Duration': duration,
             'ExtraPages': '0',
             'Difficulty': difficulty,
             'EDC': EDC,
@@ -72,8 +80,8 @@ with st.form("Task Form"):
             'ToAssisst': '',
             'AssignedBy': assignedby,
             'ApprovedBy': approvedBy,
-            'AsignDesign': 'GM (Tech)',
-            'ApprovedDesign': 'GM (Tech)',
+            'AsignDesign': assignByD,
+            'ApprovedDesign': approvByD,
             'Completed': str(taskCompleted),
             'CompletionDate': CompletionDate,
         }
