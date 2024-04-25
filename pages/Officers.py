@@ -20,7 +20,7 @@ conn = st.connection("supabase",type=SupabaseConnection)
     # Perform query.
     #rows = conn.query("Name", table="Officers", ttl= "10m").ilike(column="Name" , pattern="Muhammad Abu Bakar").execute()
 
-
+st.query_params.clear()
 rows = conn.query("*", table="Officers", ttl="10m").execute()
 
 df = pd.DataFrame(rows.data)

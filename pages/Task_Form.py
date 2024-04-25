@@ -60,7 +60,7 @@ with st.form("Task Form"):
     submit = st.form_submit_button('Generate Document')
     if submit:
          InsertResult = conn.table("Tasks").insert(
-            {"ProjectID": project, "Dated": currentDate, "AssignmentDescription": assignmentDescription,"EDC": EDC,"Difficulty": difficulty,"Completed": taskCompleted,"Completion Date": CompletionDate,"Assigned To": assignedTo,"Assigned by": assignedby,"Approved By": approvedBy,"assignByD":assignByD,"approvByD":approvByD,"username": st.session_state.user,}, count="None").execute()
+            {"ProjectID": project, "Dated": currentDate, "AssignmentDescription": assignmentDescription,"EDC": EDC,"Difficulty": difficulty,"Completed": taskCompleted,"Completion Date": CompletionDate,"Assigned To": assignedTo,"Assigned by": assignedby,"Approved By": approvedBy,"assignByD":assignByD,"approvByD":approvByD,"Duration":duration,"username": st.session_state.user,}, count="None").execute()
     
          st.write(InsertResult)
 
